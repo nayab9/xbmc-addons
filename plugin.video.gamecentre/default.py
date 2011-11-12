@@ -2,7 +2,7 @@ import xbmcgui
 import xbmcplugin
 import sys
 
-# magic; id of this plugin's insta nce - cast to inte ger
+# magic; id of this plugin's instance - cast to integer
 thisPlugin = int(sys.argv [1])
 
 def create_listings():
