@@ -39,7 +39,11 @@ def find_raw_url(element):
             return True                
         return False
 
-    result = element.find(tag_filter).get('href')
+    try:
+        result = element.find(tag_filter).get('href')
+    except:
+        #Couldn't find a watch live link
+        result = None
     return result
 
 def find_time(game_element):
