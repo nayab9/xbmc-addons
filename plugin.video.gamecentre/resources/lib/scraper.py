@@ -1,6 +1,7 @@
-from lxml import etree
+from BeautifulSoup import BeautifulSoup 
 from datetime import date
 from collections import namedtuple
+import urllib2
 
 BASE_URL = 'http://www.nhl.com/ice/scores.htm'
 Game = namedtuple('Game', 'home_team away_team score raw_url time')
@@ -17,34 +18,39 @@ def construct_url(date, base=BASE_URL):
     return base + '?date=' + date 
 
 def find_games(url):
-    game_parser = etree.HTMLParser()
-    tree = etree.parse(url, parser=game_parser)
-    root = tree.getroot()
-    games = [ x for x in root.findall(".//div[@class]") if x.attrib['class']=='sbGame']
+    page = urllib2.urlopen(url)
+    soup = BeautifulSoup(page)
+    games = soup.findAll('div', {'class':'sbGame'})
     return games
 
 def find_raw_url(element):
     """Finds the Watch Live URL."""
-    for x in element.iterfind(".//a[@title]"):
-        if 'Watch' in x.attrib['title']:
-            result = x.attrib['href']
-    if 'register' in result:
-        result = None
+    def tag_filter(tag):
+        if tag.name == 'a' \
+        and 'Watch' in tag.get('title') \
+        and 'register' not in tag.get('href'):
+            return True
+        else:
+            return False
+    result = element.find(tag_filter).get('href')
     return result
 
 def find_time(game_element):
     """Find how much time is left in the game"""
-    matches = game_element.iterfind(".//th")
+    matches = game_element.find('th')
     if matches:
-        return matches.next().text.rstrip()
+        result = str( matches.getText() ).rstrip()
+        if '(' in result:
+            result = result[:result.index('(')]
+        return result
     else:
         return None
     
 def parse_game(game_element):
-    teams = [ x for x in game_element.findall(".//td[@class]") if x.attrib['class']=='team left']
-    home_team = teams[1].find("./a").text
-    away_team = teams[0].find("./a").text
-    scores = [ x for x in game_element.findall(".//td[@class]") if x.attrib['class']=='total']
+    teams = game_element.findAll('td', {'class':'team left'})
+    away_team = teams[0].find('a').getText()
+    home_team = teams[1].find('a').getText()
+    scores = game_element.findAll('td', {'class':'total'})
     home_score = scores[1].text
     away_score = scores[0].text
     raw_url =  find_raw_url(game_element)

@@ -1,10 +1,14 @@
 import unittest
+import os
 from datetime import date
-
 from resources.lib import scraper
 
 class TestGameCenter(unittest.TestCase):
     
+    def setUp(self):
+        unittest.TestCase.setUp(self)
+        self.TEST_URL = 'file://' + os.getcwd() + '/testPage.htm'
+        
     def testPickDate(self):
         d = date(2011, 12, 31)
         expected = '12/31/2011'
@@ -23,12 +27,12 @@ class TestGameCenter(unittest.TestCase):
         self.assertEqual(expected, result)
     
     def testFindGames(self):
-        games = scraper.find_games('testPage.htm')
+        games = scraper.find_games(self.TEST_URL)
         
         self.assertEqual(4, len(games))
 
     def testParseGame(self):
-        games = scraper.find_games('testPage.htm')
+        games = scraper.find_games(self.TEST_URL)
         game = scraper.parse_game(games[0])
         self.assertEqual('San Jose', game.away_team)
         self.assertEqual('New Jersey', game.home_team)
