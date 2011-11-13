@@ -39,4 +39,7 @@ class TestGameCenter(unittest.TestCase):
         self.assertEqual(('4','3'), game.score)
         self.assertEqual('http://www.nhl.com/ice/gamecenterlive.htm?id=2011020091', game.raw_url)
         self.assertEqual('FINAL SO', game.time)
-        
+    
+    def test_find_flash_url(self):
+        raw_url = 'http://www.nhl.com/ice/gamecenterlive.htm?id=2011020091'
+        print scraper.find_flash_url(raw_url)
