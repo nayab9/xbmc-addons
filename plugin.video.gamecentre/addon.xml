@@ -1,18 +1,18 @@
-<?xml version ="1.0" encod ing="U TF-8"? standalone="yes"?>
-<addon id="plugin.video.gamecentre"
-	version="0.0.1"
-	name="NHL"
-	provider-name="boxterra">
-	
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.video.gamecentre" name="NHL GameCentre" version="0.1" provider-name="Boxterra">
+
 	<requires>
 		<import addon="xbmc.python" version="1.0"/>
 	</requires>
+	
 	<extension point="xbmc.python.pluginsource" library="default.py">
 		<provides>video</provides>
 	</extension>
-	<extension point="xbmc.addon.metadata">
-		<platform>all</platform>
+
+  	<extension point="xbmc.addon.metadata">
+    	<platform>all</platform>
 		<summary>NHL GameCentre Live</summary>
 		<description>Watch games via NHL GameCentre Live</description>
 	</extension>
+
 </addon>

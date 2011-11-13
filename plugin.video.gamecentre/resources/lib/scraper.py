@@ -26,12 +26,19 @@ def find_games(url):
 def find_raw_url(element):
     """Finds the Watch Live URL."""
     def tag_filter(tag):
-        if tag.name == 'a' \
-        and 'Watch' in tag.get('title') \
-        and 'register' not in tag.get('href'):
-            return True
-        else:
+        name = tag.name
+        title = tag.get('title')
+        href = tag.get('href')
+        if name != 'a':
             return False
+        if not title:
+            return False
+        if not href:
+            return False
+        if 'Watch' in title and 'register' not in href:
+            return True                
+        return False
+
     result = element.find(tag_filter).get('href')
     return result
 
@@ -62,7 +69,8 @@ def parse(date=None):
     result = []
     if date is None:
         date = pick_date()
-    game_elements = find_games( construct_url( date ) )
+    url = construct_url(date)
+    game_elements = find_games(url)
     for e in game_elements:
         result.append(parse_game(e))
     return tuple(result)
