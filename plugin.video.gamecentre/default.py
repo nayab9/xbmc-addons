@@ -2,6 +2,7 @@ import xbmcgui
 import xbmcplugin
 import sys
 from resources.lib import scraper
+from datetime import date
 
 # magic; id of this plugin's instance - cast to integer
 thisPlugin = int(sys.argv [1])
@@ -15,7 +16,7 @@ def create_listings():
     games = scraper.parse()
     if games:
         for x in games:
-            title = x.away_team + ' @ ' + x.home_team + ' (' + x.score[0] + '-' +x.score[1] + ')' + '  ' + x.time
+            title = date.today().strftime('%Y-%m-%d') + '   ' + x.away_team + ' @ ' + x.home_team + ' (' + x.score[0] + '-' +x.score[1] + ')' + '  ' + x.time
             listing.append(title)
     return listing
 
