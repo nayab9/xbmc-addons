@@ -15,7 +15,7 @@ def create_listings():
     games = scraper.parse()
     if games:
         for x in games:
-            title = x.away_team + ' @ ' + x.home_team
+            title = x.away_team + ' @ ' + x.home_team + ' (' + x.score[0] + '-' +x.score[1] + ')' + '  ' + x.time
             listing.append(title)
     return listing
 
