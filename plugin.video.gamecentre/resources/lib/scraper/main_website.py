@@ -4,14 +4,6 @@ from collections import namedtuple
 import urllib2
 
 BASE_URL = 'http://www.nhl.com/ice/scores.htm'
-FLASHVARS = {'server':'http://gamecenter.nhl.com/nhlgc/',
-             'locimage':'http://nhl.cdn.neulion.net/u/nhlgc/',
-             'gameid':None,
-             'scores':'true',
-             'complete':'consoleLoaded',
-             'osca':'nhlnhlleaguecom,nhlglobal' }
-FLASH_SRC = 'http://nhl.cdn.neulion.net/u/nhlgc/gclplayer.swf'
-
 Game = namedtuple('Game', 'home_team away_team score raw_url time')
 
 def pick_date(currentDate=None):
@@ -21,7 +13,7 @@ def pick_date(currentDate=None):
         currentDate = date.today()
     return currentDate.strftime('%m/%d/%Y')
 
-def construct_url(date, base=BASE_URL):
+def construct_scrape_page_url(date, base=BASE_URL):
     '''Consturcts the URL to scrape. date is a string in MM/DD/YYYY format'''
     return base + '?date=' + date 
 
@@ -54,13 +46,7 @@ def find_raw_url(element):
         result = None
     return result
 
-def find_flash_url(raw_url):
-    game_id = raw_url[raw_url.rfind('?id=')+4:]
-    flash_vars = dict(FLASHVARS)
-    flash_vars['gameid']  = game_id
-    return flash_vars
-
-def find_time(game_element):
+def find_time_left(game_element):
     """Find how much time is left in the game"""
     matches = game_element.find('th')
     if matches:
@@ -79,7 +65,7 @@ def parse_game(game_element):
     home_score = scores[1].text
     away_score = scores[0].text
     raw_url =  find_raw_url(game_element)
-    time = find_time(game_element)
+    time = find_time_left(game_element)
     
     return Game(home_team, away_team, (away_score,home_score), raw_url, time)    
 
@@ -87,7 +73,7 @@ def parse(date=None):
     result = []
     if date is None:
         date = pick_date()
-    url = construct_url(date)
+    url = construct_scrape_page_url(date)
     game_elements = find_games(url)
     for e in game_elements:
         result.append(parse_game(e))
