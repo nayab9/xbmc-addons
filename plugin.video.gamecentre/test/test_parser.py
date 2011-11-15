@@ -3,6 +3,12 @@ import os
 from datetime import date
 from resources import GCparser
 
+def read_test_data_file(file_to_read):
+    full_path = os.getcwd() + '/data/' + file_to_read
+    with open(full_path, 'r') as f:
+        result = f.read()
+    return result
+    
 class Test_Listings(unittest.TestCase):
     
     def setUp(self):
@@ -44,14 +50,29 @@ class Test_Listings(unittest.TestCase):
 class Test_Servlets(unittest.TestCase):
     def setUp(self):
         pass
-
+    
     def test_parse_game_servlet_response(self):
-        response_file = os.getcwd() + '/data/game_servlet_response.xml'
-        with open(response_file, 'r') as f:
-            response = f.read()
-        parsed_data = GCparser.parse_game_servlet_response(response)
+        response_xml = read_test_data_file('game_servlet_response.xml')
+        parsed_data = GCparser.parse_game_servlet_response(response_xml)
         _id = u'7194'
         home = u'34304'
         away = u'35636'
         expected = (_id, home, away)
         self.assertEqual(expected, parsed_data)
+        
+    def test_parse_play_servlet_response(self):
+        response_xml = read_test_data_file('encrypted_url_response.xml')
+        actual = GCparser.parse_encrypted_url_response(response_xml)
+        expected = 'nlds31.neulion.com:443/nlds/nhl/blackhawks/as/live/s_blackhawks_live_game_hd?eid=32714&pid=34305&gid=3000&pt=5&uid=376556'
+        self.assertEqual(expected, actual)
+        
+    def test_parse_streams_response(self):
+        response_xml = read_test_data_file('play_response.xml')
+        actual = GCparser.parse_streams_response(response_xml)
+        self.assertEqual(u'1321225900000', actual[0].currentTime)
+        self.assertEqual(u'/nlds/nhl/panthers/as/live/panthers_hd_1', actual[0].url)
+        self.assertEqual(u'2000', actual[0].blockDuration)
+        self.assertEqual(u'8000', actual[0].liveBlockDelay)
+        self.assertEqual(u'409600', actual[0].bitrate)
+        self.assertEqual([u'nlds36.cdnllnwnl.neulion.com', u'nlds36.cdnl3nl.neulion.com'], actual[0].httpservers)
+        

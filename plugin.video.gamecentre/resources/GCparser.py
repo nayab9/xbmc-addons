@@ -1,4 +1,4 @@
-from resources.lib.BeautifulSoup import BeautifulSoup 
+from resources.lib.BeautifulSoup import BeautifulSoup, Tag 
 from datetime import date
 from collections import namedtuple
 import urllib2
@@ -88,9 +88,9 @@ class Listings():
         return GameListing(home_team, away_team, (away_score,home_score), raw_url, time)    
 
 
-###Game Parser###
-def parse_game_servlet_response(game_xml):
-    soup = BeautifulSoup(game_xml)
+#Mini parsers used for various querries to GameCentre servers
+def parse_game_servlet_response(response_xml):
+    soup = BeautifulSoup(response_xml)
     g_id = home_program = away_program = None
     
     g_id = soup.find('id').getText()
@@ -101,5 +101,31 @@ def parse_game_servlet_response(game_xml):
         
     return g_id, home_program, away_program
 
-def parse_play_servlet_response(play_xml):
-    pass
+def parse_encrypted_url_response(response_xml):
+    soup = BeautifulSoup(response_xml)
+    result = soup.find('path').getText()
+    result = result[11:] #Strip off 'adaptive://'
+    return result
+
+def parse_streams_response(response_xml):
+    soup = BeautifulSoup(response_xml)
+    streams = soup.findAll('streamdata')
+    currentTime = soup.find('channel').get('currenttime')
+    result = []
+    for x in streams:
+        new_stream = Stream(currentTime, x.get(u'url'))
+        new_stream.blockDuration = x.get(u'blockduration')
+        new_stream.liveBlockDelay = x.get(u'liveblockdelay')
+        new_stream.bitrate = x.get(u'bitrate')
+        new_stream.liveStartupTime = x.get(u'livestartuptime')
+        httpservers = []
+        for server in x.findAll('httpserver'):
+            httpservers.append(server.get('name'))
+        new_stream.httpservers = httpservers
+        result.append(new_stream)
+    return result
+        
+class Stream(object):
+    def __init__(self, currentTime, url):
+        self.currentTime = currentTime
+        self.url = url
