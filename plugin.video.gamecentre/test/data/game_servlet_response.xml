@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<result>
+	<currentDate>2011-11-13T20:07:41.771</currentDate>
+	
+		<game>
+			<id>7194</id>
+			<season>2011</season>
+			<type>2</type>
+			<gid>0242</gid>
+			<date>2011-11-13T20:01:12.000</date>
+			<gameTimeGMT>2011-11-14T01:01:12.000</gameTimeGMT>
+			
+			<awayTeam>MIN</awayTeam>
+			<awayGoals></awayGoals>
+			<homeTeam>ANA</homeTeam>
+			<homeGoals></homeGoals>
+			<result></result>
+			
+			
+			
+			
+			
+			
+				<homeProgramId>34304</homeProgramId>
+			
+			
+				<hasHomeProgram>true</hasHomeProgram>
+				
+					
+						<isHomeLive>true</isHomeLive>
+					
+					
+				
+			
+			
+				<awayProgramId>35636</awayProgramId>
+			
+			
+				<hasAwayProgram>true</hasAwayProgram>
+				
+					
+						<isAwayLive>true</isAwayLive>
+					
+					
+				
+			
+		</game>
+	
+</result>
