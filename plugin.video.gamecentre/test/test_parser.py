@@ -41,6 +41,7 @@ class Test_Listings(unittest.TestCase):
     def testParseGame(self):
         games = self.listings.find_games(self.TEST_URL)
         game = self.listings.parse_raw_game(games[0])
+        self.assertEqual(('02','0091'), game.game_id)
         self.assertEqual('San Jose', game.away_team)
         self.assertEqual('New Jersey', game.home_team)
         self.assertEqual(('4','3'), game.score)
@@ -54,9 +55,9 @@ class Test_Servlets(unittest.TestCase):
     def test_parse_game_servlet_response(self):
         response_xml = read_test_data_file('game_servlet_response.xml')
         parsed_data = GCparser.parse_game_servlet_response(response_xml)
-        _id = u'7194'
-        home = u'34304'
-        away = u'35636'
+        _id = '7194'
+        home = '34304'
+        away = '35636'
         expected = (_id, home, away)
         self.assertEqual(expected, parsed_data)
         
@@ -69,10 +70,10 @@ class Test_Servlets(unittest.TestCase):
     def test_parse_streams_response(self):
         response_xml = read_test_data_file('play_response.xml')
         actual = GCparser.parse_streams_response(response_xml)
-        self.assertEqual(u'1321225900000', actual[0].currentTime)
-        self.assertEqual(u'/nlds/nhl/panthers/as/live/panthers_hd_1', actual[0].url)
-        self.assertEqual(u'2000', actual[0].blockDuration)
-        self.assertEqual(u'8000', actual[0].liveBlockDelay)
-        self.assertEqual(u'409600', actual[0].bitrate)
-        self.assertEqual([u'nlds36.cdnllnwnl.neulion.com', u'nlds36.cdnl3nl.neulion.com'], actual[0].httpservers)
+        self.assertEqual('1321225900000', actual[0].currentTime)
+        self.assertEqual('/nlds/nhl/panthers/as/live/panthers_hd_1', actual[0].url)
+        self.assertEqual('2000', actual[0].blockDuration)
+        self.assertEqual('8000', actual[0].liveBlockDelay)
+        self.assertEqual('409600', actual[0].bitrate)
+        self.assertEqual(['nlds36.cdnllnwnl.neulion.com', 'nlds36.cdnl3nl.neulion.com'], actual[0].httpservers)
         

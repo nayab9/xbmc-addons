@@ -7,7 +7,7 @@ import urllib2
 Module to that contains all the logic to parse the data from GameCentre
 """
 
-GameListing = namedtuple('GameListing', 'home_team away_team score raw_url time')
+GameListing = namedtuple('GameListing', 'game_id home_team away_team score raw_url time')
 
 class Listings():
     BASE_URL = 'http://www.nhl.com/ice/scores.htm'
@@ -84,27 +84,26 @@ class Listings():
         away_score = scores[0].text
         raw_url =  self.find_raw_url(game_element)
         time = self.find_time_left(game_element)
-        
-        return GameListing(home_team, away_team, (away_score,home_score), raw_url, time)    
+        game_id = (raw_url[-6:][:2],raw_url[-6:][2:]) #(Unkown number, Game ID)
+        return GameListing(game_id, home_team, away_team, (away_score,home_score), raw_url, time)    
 
 
 #Mini parsers used for various querries to GameCentre servers
 def parse_game_servlet_response(response_xml):
     soup = BeautifulSoup(response_xml)
-    g_id = home_program = away_program = None
+    _id = home_program = away_program = None
     
-    g_id = soup.find('id').getText()
+    _id = soup.find('id').getText()
     if soup.find('hashomeprogram') and soup.find('hashomeprogram').getText() == 'true':
         home_program = soup.find('homeprogramid').getText()
     if soup.find('hasawayprogram') and soup.find('hasawayprogram').getText() == 'true':
         away_program = soup.find('awayprogramid').getText()
         
-    return g_id, home_program, away_program
+    return _id, home_program, away_program
 
 def parse_encrypted_url_response(response_xml):
     soup = BeautifulSoup(response_xml)
-    result = soup.find('path').getText()
-    result = result[11:] #Strip off 'adaptive://'
+    result = soup.find('path').getText()[11:] #Strip 'addaptive://' from the start
     return result
 
 def parse_streams_response(response_xml):
