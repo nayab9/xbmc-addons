@@ -98,12 +98,16 @@ def parse_game_servlet_response(response_xml):
         home_program = soup.find('homeprogramid').getText()
     if soup.find('hasawayprogram') and soup.find('hasawayprogram').getText() == 'true':
         away_program = soup.find('awayprogramid').getText()
-        
+    
+    #TODO: if the game is archived, just use the rtmp stream returned here    
     return _id, home_program, away_program
 
 def parse_encrypted_url_response(response_xml):
     soup = BeautifulSoup(response_xml)
-    result = soup.find('path').getText()[11:] #Strip 'addaptive://' from the start
+    raw = soup.find('path').getText()[11:] #Strip 'addaptive://' from the start
+    host = raw[:raw.find('/')]
+    url = raw[raw.find('/'):]
+    result = host + '?play?url=' + url
     return result
 
 def parse_streams_response(response_xml):
