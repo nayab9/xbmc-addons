@@ -1,7 +1,7 @@
 import xbmcgui
 import xbmcplugin
 import sys
-from resources.lib.scraper import main_website
+from resources import GCparser
 from datetime import date
 
 # magic; id of this plugin's instance - cast to integer
@@ -13,7 +13,7 @@ def create_listings():
     @return list
     """
     listing = []
-    games = main_website.parse()
+    games = GCparser.parse()
     if games:
         for x in games:
             title = date.today().strftime('%Y-%m-%d') + '   ' + x.away_team + ' @ ' + x.home_team + ' (' + x.score[0] + '-' +x.score[1] + ')' + '  ' + x.time
