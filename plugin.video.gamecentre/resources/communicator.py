@@ -2,7 +2,7 @@ import urllib
 import urllib2
 import cookielib
 import time
-from urlgrabber.keepalive import HTTPHandler
+from resources.lib.urlgrabber.keepalive import HTTPHandler
 
 #USER_AGENT = 'Mozilla/5.0 (X11; U; Linux i586; de; rv:5.0) Gecko/20100101 Firefox/5.0'
 USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.120 Safari/535.2'
@@ -27,18 +27,16 @@ class Comm(object):
         self.password = password
         self.cookiejar = cookielib.CookieJar(cookielib.DefaultCookiePolicy())
         self.default_headers = ('User-Agent', USER_AGENT)
-        self.br.addheaders = [self.default_headers]
-        self.br.set_handle_robots(False)
         self.cookies = []
         keepalive_handler = HTTPHandler()
         self.api_opener = urllib2.build_opener(keepalive_handler)
         urllib2.install_opener(self.api_opener)
     
     def setup_cookies(self):
-        print self.login()
-        print self._get_simple_console_cookies()
-        print self._get_api_cookies()
-        print self._get_socialize_cookies()
+        self.login()
+        self._get_simple_console_cookies()
+        self._get_api_cookies()
+        self._get_socialize_cookies()
         
     def login(self):
         """
@@ -199,9 +197,13 @@ class Comm(object):
         return response
     
     def send_encrypted_url_request(self, program_id):
+        if 'rtmp' in program_id:
+            type = 'fvod'
+        else:
+            type = 'gameaa'
         request_params = (
             ('isFlex', 'true'),
-            ('type', 'gameaa'),
+            ('type', type),
             ('path', program_id) #Home or Away programID from the game servlet response
             ) 
         data = urllib.urlencode(request_params)
@@ -219,16 +221,15 @@ class Comm(object):
             ('Cookie', self.generate_cookie_string(self.cookies) ),
             ('Origin', 'http://nhl.cdn.neulion.net'),
             ('Referer', 'http://nhl.cdn.neulion.net/u/nhlgc/gclplayer.swf'), ]
-        
         self.api_opener.addheaders=headers
         response = self.api_opener.open(ENCRYPTED_VIDEO_PATH_URL, data)
         return response
     
     def send_streams_request(self, encrypted_url):
-        playNoCacheTick = None
+        #playNoCacheTick = None
         self.api_opener.addheaders = [('Referer', 'http://nhl.cdn.neulion.net/u/nhlgc/gclplayer.swf')]
-        print 'http://'+encrypted_url
-        response = self.api_opener.open('http://' + encrypted_url)
+        request = urllib2.Request(encrypted_url)
+        response = self.api_opener.open(request)
         return response
 
     def extract_cookies(self, info):
