@@ -5,11 +5,6 @@ import communicator
 Glue it all together
 '''
 
-class Streams(object):
-    def __init__(self):
-        pass
-    
-
 class NHLGame(object):
     game_id = ''
     title = ''

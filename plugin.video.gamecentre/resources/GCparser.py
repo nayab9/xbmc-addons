@@ -19,7 +19,7 @@ class Streams(object):
         self.paths = dict()
 
     
-class Listings():
+class Listings(object):
     BASE_URL = 'http://www.nhl.com/ice/scores.htm'
     
     def pick_date(self, listing_date=None):
